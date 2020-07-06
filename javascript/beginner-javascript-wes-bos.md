@@ -834,3 +834,351 @@ photoEl.addEventListener("mouseenter", function(e) {
 - better to used e.target() or e.currentTarget()
 
 ### Events - Prevent Default and Form Events
+
+- lots of your work with events will have to do with forms and inputs
+- a lot of elements have default actions like the link on <a> - we can grab these and work with them with JS by preventing the default action - event.preventDefault();
+- when selecting a form its better to use a name attribute rather than a class
+
+```javascript
+const signUpForm = document.querySelector('[name="signup"]');
+
+signUpForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+  console.dir(event.currentTarget); // will list all the elements and methods on our form
+
+  console.log(event.currentTarget.name.value); // returns value in name input
+  console.log(event.currentTarget.email.value); // returns value in email input
+  console.log(event.currentTarget.agree.checked); // returns boolean in agree checkbox
+});
+```
+
+- we can also listen for other events like:
+  - keyup
+  - keydown
+  - focus
+  - blur
+
+### Events - Accessibility Gotchas and Keyboard Codes
+
+- a link should be used for going to another page
+- a button should be used when we want to trigger some sort of action in our page
+- we can listen for 'click' but if we also need to listen for the enter key if someone is using a keyboard rather than a mouse then we listen for the 'keyup' event
+- Wes has a site to help with keycodes - [keycodes](http://keycode.info/)
+
+```javascript
+const photo = document.querySelector(".photo");
+
+function handleClick(event) {
+  if (event.type === "click" || event.key === "Enter") {
+    console.log("You clicked the photo");
+  }
+}
+
+photo.addEventListener("click", handleClick);
+photo.addEventListener("keyup", handleClick);
+```
+
+## Module 6: Serious Practice Exercises
+
+### Etch-a-Sketch
+
+- once we've selected the canvas we can set the context between 2d or 3d
+
+```javascript
+const canvas = document.querySelector("#etch-a-sketch");
+const ctx = canvas.getContext("2d"); // set canvas context (could be 3d too)
+
+// To start or drawing 200 in and 200 down:
+ctx.beginPath(); // start the drawing
+ctx.moveTo(200, 200);
+ctx.lineTo(200, 200);
+ctx.stroke();
+```
+
+- see etch-a-sketch.js for comments
+
+### Click Outside Modal
+
+- useful to use pointer-events: none; to deal with how the modal is on top of content when hidden so that the card buttons no longer work.
+
+```javascript
+const cardButtons = document.querySelectorAll(".card button");
+const modalInner = document.querySelector(".modal-inner");
+const modalOuter = document.querySelector(".modal-outer");
+
+function handleCardButtonClick(event) {
+  const button = event.currentTarget;
+  // finds the closest parent with a class of .card
+  const card = button.closest(".card");
+  // now grab the image in that closest card
+  const imgSrc = card.querySelector("img").src;
+  // and the data-description from that card
+  const desc = card.dataset.description;
+  const name = card.querySelector("h2").textContent;
+
+  // target the modal inner and add a larger version of the image
+  modalInner.innerHTML = `
+    <img src="${imgSrc.replace("200", "600")}" alt="${name}" />
+    <p>${desc}</p>
+  `;
+
+  // then add the class of open so it shows up
+  modalOuter.classList.add("open");
+}
+
+cardButtons.forEach((button) =>
+  button.addEventListener("click", handleCardButtonClick)
+);
+
+// function to close the modal
+function closeModal() {
+  modalOuter.classList.remove("open");
+}
+
+modalOuter.addEventListener("click", function(event) {
+  // takes the event & creates a boolean
+  // clicking inside the modal-inner returns false, outside returns true
+  const isOutside = !event.target.closest(".modal-inner");
+  // console.log(isOutside);
+
+  // so if true then run the close modal function
+  if (isOutside) {
+    closeModal();
+  }
+});
+
+// add a listener for the esc key also
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    closeModal();
+  }
+});
+```
+
+### Scroll Events and Intersection Observer
+
+- a good practice to follow if wrapping our scripts in a function
+- then testing if the element we want to target is on the particular page
+- if it isn't then return and exit the function
+- if it is continue on with your script
+
+```javascript
+// wrap our script in a function to isolate it
+function scrollToAccept() {
+  // select our terms
+  const terms = document.querySelector(".terms-and-conditions");
+  // if terms doesn't exist on the page then return nothing
+  if (!terms) {
+    return;
+  }
+
+  // but if it is on the page then continue our script
+  terms.addEventListener("scroll", function(e) {
+    console.log(e);
+  });
+}
+
+scrollToAccept();
+```
+
+- in the past you would have had to find the scrollTop and also the scrollHeight so you'd know when the distance from the scrollTop was close to the scrollHeight
+- we can use intersection observer to find out if an element is visible on the page
+
+```javascript
+const watch = document.querySelector(".watch");
+
+// IntersectionObserver needs a callback
+function obCallback(payload) {
+  console.log(payload);
+}
+// for intersection observer we create a new IntersectionObserver
+const ob = new IntersectionObserver(obCallback);
+
+// now we can use that IntersectionObserver to observer something
+ob.observe(watch);
+```
+
+### Tabs
+
+- looked at using aria roles to target with our JS
+- how to set aria role with setAttribute
+- how to use the .find() method
+
+## Module 7: Logic and Flow Control
+
+### BEDMAS
+
+- B-rackets
+- E-xponents
+- D-ivision
+- M-ultiplication
+- A-ddition
+- S-ubtraction
+
+### Flow Control - If Statements, Function Returns, Truthy, Falsy
+
+- if statements expect a value of true or false
+- if statements take a condition which either returns true or false
+- you can chain multiple conditions with 'if else' - JS splits the words
+- as soon as an if statement hits true all the other if else conditions are ignored
+- you can finish up with a simple else
+
+```javascript
+if (condition) {
+  // do something
+} else if (condition2) {
+  // do something else
+} else {
+  // a last resort
+}
+```
+
+- you can use if statements in a function
+
+```javascript
+function slugify(sentence, lowercase) {
+  if (lowercase) {
+    return sentence.replace(/\s/g, "-").toLowerCase();
+  }
+  // else
+  return sentence.replace(/\s/g, "-");
+}
+```
+
+- we could have wrapped the second statement in an else but the above still works
+- if the first statement is true it returns and ignores the next return. But if the first statement is false it just skips down to the next return
+
+```javascript
+// a nicer way to write the above function
+// good if the regex is complicated as you only write it once
+function slugify(sentence, lowercase) {
+  let slug = sentence.replace(/\s/g, "-");
+  if (lowercase) {
+    return slug.toLowerCase();
+  }
+  return slug;
+}
+```
+
+- = a single equal assigns a value
+- == a double equals compares two values but it it doesn't check the type
+- so 10 == '10' would return true
+- === a triple equals is best practice as that will compare 2 values and also take into account the type
+- !== not equal
+
+- < > greater than and less than
+- <= less than or equal
+- > = greater than or equal
+
+- && AND
+- || OR
+- often a good idea with multiple && or || statements to break them out into a variable
+
+#### Truthy & Falsy
+
+**Truthy Values**
+
+- 1
+- -10
+- full string
+- a string of "0"
+
+**Falsy values**
+
+- 0
+- undefined variable
+- variable set to null
+- a variable set to `"hello" - 10` NaN
+- empty string
+
+### Coercion, Ternaries and Conditional Abuse
+
+- coercion is when we take a different type and turn it in to a boolean
+- adding a ! infront turns it into a boolean returning false
+- adding !! infront returns true
+
+```javascript
+if (!isCool) {
+  // return opposite
+}
+```
+
+- a **ternary** is a shorthand if statement - good when you want to see if something is true or false
+- a ternary is 3 things:
+  1. a condition
+  2. what to return if true
+  3. what to return if false
+- you must always have a final case.
+-
+
+```javascript
+const count = 1;
+const word = count === 1 ? "item" : "items";
+
+// can also run a function in it
+function showAdminBar() {
+  // something
+}
+
+const isAdmin = true;
+isAdmin ? showAdminBar() : null;
+
+// AND AND Trick
+isAdmin && showAdminBar(); // this will run the function because isAdmin is true, if false it never moves to the next one
+// often see this in react
+```
+
+### Intervals and Timers
+
+- if you want to run something after 5 sec you run a timeout
+- if you want to run something every 5 sec you run a interval
+- setTimeout() if a method we have access too
+- setTimeout(callback, sec) - takes a callback and a number of sec
+
+```javascript
+setTimeout(function() {
+  console.log("Done!");
+}, 500);
+```
+
+- runs an anonymous function 500 milliseconds after the function starts
+
+```javascript
+function buzzer() {
+  console.log("ENNNNG!");
+}
+setTimeout(buzzer, 500);
+```
+
+- or running it with a named function
+
+```javascript
+function buzzer() {
+  console.log("ENNNNG!");
+}
+console.log("starting");
+setTimeout(buzzer, 500);
+console.log("finishing");
+
+// the above would return
+starting
+finishing
+ENNNNG!
+```
+
+- this is because JS is asynchronous - it will do the first log, then start the setTimeout, then immediately move to the last log with the callback happening after the timer
+
+```javascript
+function buzzer() {
+  console.log("ENNNNG!");
+}
+setInterval(buzzer, 500);
+```
+
+- with setInterval we're running our buzzer function every 500 milliseconds
+- a setInterval will not run immediately, but affer the timer set
+- if you need to stop your timer you need to give it a variable name then use clearTimeout(variable);
+
+## Module 8: Data Types
+
+### Objects
