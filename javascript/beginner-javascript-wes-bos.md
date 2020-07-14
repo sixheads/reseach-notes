@@ -1182,3 +1182,164 @@ setInterval(buzzer, 500);
 ## Module 8: Data Types
 
 ### Objects
+
+- good for grouping together properties and values
+- store related data or functionality
+- objects are good when the order of the properties don't matter
+
+```javascript
+// this is an object literal
+const person = {
+  age: 100,
+  name: "john",
+  clothing: {
+    // sub properties
+    shirts: "black",
+    pants: "jeans",
+  },
+  // our method
+  sayHello: function(greeting = `Hey`) {
+    return `${greeting} ${this.name}`;
+  },
+  // method shorthand
+  sayHello(greeting = `Hey`) {
+    return `${greeting} ${this.name}`;
+  },
+};
+
+// add another property
+person.job = "web developer";
+
+// Overwrite property
+person.age = 50;
+
+// Access a value with dot notation
+person.name;
+person.clothing.shirts;
+
+// Access a value with bracket notation
+person["age"];
+// useful if the property you are accessing won't work with dot notation
+
+// if a property doesn't exist you might need to check for it
+person.job ? person.job.side : `Jobs doesn't exist`;
+
+// Remove a property
+delete person.age;
+```
+
+- property on the left value on the right
+- the value can be anything, a string, function etc
+- good idea to get into the habit of using a trailing comma
+- you can re-assign the const variable, but the properties inside it can change
+
+```javascript
+// checking if a value exists
+const nameInput = document.querySelector('[name="first"]');
+
+const name = nameInput ? nameInput.value : "";
+```
+
+- a **method** is a function that lives inside of an object
+- in our method the **this** keyword references the object - eg. this.name = person.name
+- this is very important when we get into prototypes
+
+### Object Reference vs Value
+
+- setting an object variable to equal another object doesn't make a copy, but just references the original object
+
+```javascript
+const person1 = {
+  first: "john",
+  last: "fry",
+};
+
+const person2 = person1;
+
+// so then changing the first value in person2
+person2.first = "dave";
+
+console.log(person1.first); // returns dave
+```
+
+- one way to copy an object is to use a spread
+- a spread takes the contents of the other object and copies it into a new object
+
+```javascript
+const person2 = { ...person1 };
+
+// old way to do it, not used any more
+const person2 = Object.assign({}, person1);
+```
+
+- this only does a **shallow copy**, meaning it won't grab deeper levels of properties, like nested properties
+- libraries like **lodash** do offer an option for a **deep clone** - https://lodash.com/
+- you can also use the spread operator to merge two objects
+
+```javascript
+const mergedObject = { ...object1, ...object2 };
+```
+
+- order matters with this merge, duplicate values can get overwritten
+- so a duplicate in object1 would be overwritten by the one in object2
+
+- with a function if you pass in an argument that changes a value in an object, this updates that object, whereas with a string the variable isn't effected
+
+```javascript
+const name1 = 'wes';
+
+function doStuff(data) {
+  data = 'something else';
+  console.log(data); // returns something else
+}
+
+doStuff(name1);
+console.log(name1); // still returns wes
+
+// the argument is just passing in a reference to the variable not the variable itself so nothing is changed permanently
+// this is the case for booleans, numbers and strings
+
+// Whereas
+const inventory = {
+  lettuce = 4,
+  pizza = 10,
+  tomatoes = 4,
+}
+
+function doStuff2(data) {
+  data.tomatoes = 1000;
+  console.log(data); // returns something else
+}
+
+doStuff2(inventory);
+
+console.log(inventory.tomatoes); // returns 1000
+// So it actually reached out and changed the value in the object
+// this is the case for objects and arrays
+
+```
+
+- the above can cause bugs, better to pass it in as a copy
+
+### Maps
+
+- Maps work in a similar way to objects but they have additional methods on it that we can use
+- they also let you store properties that don't meet the variable name requirements that an object needs
+- when using set() we create entries within our Map which can be useful for storing additional information without property
+- order is guaranteed in a Map
+- you can use .size to get the length of your Map
+- can't put a method inside of a Map like you can on an object
+- JSON can't handle Maps so you can stringify it
+
+```javascript
+const myMap = new Map();
+
+// .set()
+myMap.set("name", "wes");
+myMap.set(100, "is a number"); // this property name wouldn't work with an object
+
+// .has()
+// .delete()
+```
+
+### Arrays
