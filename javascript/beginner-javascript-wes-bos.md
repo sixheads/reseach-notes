@@ -96,17 +96,21 @@
 function calculateBill() {
   // this is the function body
   console.log("running calculateBill");
-  const total = 100 * 1.13; // temporary variable (only exists in this function - gone once run)
-  return total; // need to return total to access it outside of the function
+  const total = 100 * 1.13;
+  // temporary variable (only exists in this function - gone once run)
+  return total;
+  // need to return total to access it outside of the function
 }
 
 // function call or run
-const myTotal = calculateBill(); // need to assign this to a variable to capture the result
+const myTotal = calculateBill();
+// need to assign this to a variable to capture the result
 console.log(myTotal); // now we can access it
 
 // OR
 
-console.log(`Your total is $${calculateBill()}`); // can run the function directly inside of our backticks
+console.log(`Your total is $${calculateBill()}`);
+// can run the function directly inside of our backticks
 ```
 
 - we need to assign our returned value to a variable to capture the result
@@ -222,7 +226,8 @@ const inchToCM = function(inches) {
   return inches * 2.54;
 };
 
-// 4. convert to arrow function - remove function keyword and add fat arrow after parameter brackets
+// 4. convert to arrow function - remove function keyword and
+// add fat arrow after parameter brackets
 const inchToCM = (inches) => {
   return inches * 2.54;
 };
@@ -458,8 +463,10 @@ function outer() {
   return inner;
 }
 
-const innerFn = outer(); // the outer function has already run
-innerFn(); // but here we are still getting access to it from the inner function
+const innerFn = outer();
+// the outer function has already run
+innerFn();
+// but here we are still getting access to it from the inner function
 ```
 
 - the trick here is that the inner function still has access to the outerVar despite the fact that it has already run so technically that variable should have been cleaned up and removed
@@ -498,13 +505,19 @@ init();
 - two main ways we select elements is:
 
 ```javascript
-const p = document.querySelector("p"); // selects the first p element it finds
-const div = document.querySelectorAll("div"); // returns all the div's it finds as a NodeList
+const p = document.querySelector("p");
+// selects the first p element it finds
+const div = document.querySelectorAll("div");
+// returns all the div's it finds as a NodeList
 
-const img = document.querySelectorAll(".item img"); // specify the image
+const img = document.querySelectorAll(".item img");
+// specify the image
 
-const item2 = document.querySelector(".item2"); // class name
-const item2Img = item2.querySelector("img"); // then grab the img on item2 - search inside that selector - limits the scope
+const item2 = document.querySelector(".item2");
+// class name
+const item2Img = item2.querySelector("img");
+// then grab the img on item2 - search inside
+// that selector - limits the scope
 
 // still options like, but easier to just use querySelector an querySelectorAll:
 document.getElementById("idname");
@@ -527,10 +540,13 @@ const heading = document.querySelector("h2");
 heading.textContent = "John is cool"; // setter
 console.dir(heading.textContent); // getter
 
-console.log(heading.innerHTML); // logs any html tags within the selected element
-console.log(heading.outerHTML); // logs any html tags outside the selected element too
+console.log(heading.innerHTML);
+// logs any html tags within the selected element
+console.log(heading.outerHTML);
+// logs any html tags outside the selected element too
 
-pizzaList.insertAdjacentText("beforebegin", "more text"); // adds text onto an element at different points - faster than textContent
+pizzaList.insertAdjacentText("beforebegin", "more text");
+// adds text onto an element at different points - faster than textContent
 ```
 
 ### Working with Classes
@@ -1343,3 +1359,501 @@ myMap.set(100, "is a number"); // this property name wouldn't work with an objec
 ```
 
 ### Arrays
+
+- arrays are good for collecting data where the order matters
+- each thing inside an array is an item
+- the position of that item is called its index - no keys in array, just the index
+- an array has a typeof object
+- Arrays are 0 based
+
+```javascript
+// this is an array literal
+const names = ["wes", "kait", "snickers"];
+
+typeof names; // returns object
+
+// to test if it is an array
+Array.isArray(names); // true
+
+console.log(names[0]); // returns wes
+console.log(names[1]); // returns kait
+
+// number if items in array
+console.log(names.length); // 3
+
+// check last item
+console.log(names[names.length - 1]);
+```
+
+- if you log the array and check out the prototypes you'll see all the methods available
+
+**Mutable & Immutable**
+
+- mutable methods cause mutations - changes the original
+- immutable methods return a new array & don't change the original
+
+```javascript
+// Mutation Methods
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+numbers.reverse();
+
+// Immutable Method
+// talks a copy at index 2 and stop before 4
+const pizzaSlice = numbers.slice(2, 4); // [3,4]
+```
+
+- if you need to use a mutation method then you need to take a copy of the original array first up
+
+```javascript
+const numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+const numbersReversed = [...numbers];
+numbersReversed.reverse();
+// or combine the two
+const numbersReversed = [...numbers].reverse();
+```
+
+#### other array methods
+
+```javascript
+names.push("lux"); // adds to the end of the array - this does mutate the array
+const names2 = [...names, "lux"]; // make a new array, copy the old one and add to it
+
+names.unshift("poppy"); // adds to the front of the array
+const names3 = ["poppy", ...names];
+
+names.splice(3, 2); // starts at 3 index and removes 2
+// this is mutable - returns [1,2,3,6,7,8,9]
+
+// add an item to the middle of an array
+const bikes = ["bianchi", "miele", "panasonic", "miyata"];
+const newBikes = [...bikes.slice(0, 2), "benotto", ...bikes.slice(2)];
+// by not adding a second value in our slice it just goes to the end of the array
+
+// to remove an item (panasonic) from the array
+const newBikes2 = [...newBikes.slice(0, 3), ...newBikes.slice(4)];
+// simply skipped taking a copy of panasonic which was 3 item in the array
+```
+
+- we can use findIndex() method to search for an item in our array
+- this runs a callback that loops through the array and returns either true or false if it finds the value
+
+```javascript
+const names = ["poppy", "wes", "kait", "snickers", "lux"];
+
+const kaitIndex = names.findIndex((name) => {
+  if (name === "kait") {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+// // could be shorted to this:
+// const kaitIndex = names.findIndex((name) => {
+//   if (name === "kait") {
+//     return true;
+//   }
+//   return false;
+// });
+
+// // even shorter:
+// const kaitIndex = names.findIndex((name) => {
+//   return name === "kait"; // this returns true or false
+// });
+
+// // or with an implicit return:
+// const kaitIndex = names.findIndex((name) => name === "kait");
+
+console.log(kaitIndex); // returns 2
+```
+
+### Array Cardio - Static Methods
+
+- [check out MDN for all the array methods available](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+
+- Array.from(), Array.isArray() & Array.of() are all static methods
+- all the Array.prototype. ones are Instance methods
+- when we create an array we generally have access to all the prototype methods
+- whereas static methods are utilities for working with arrays and they are called differently to the instance methods
+- Array.of() no overly useful
+- Array.from() useful for creating a range by specifying a length
+- Array.isArray() useful for checking if something is an array or not as typeof will just return 'object' on an array
+- Object.entries(), Object.keys, Object.values() can all be run on a array and will return both entries, the keys or the values as arrays
+
+### Array Cardio - Instance Methods
+
+- .join() will take an array and turn it into a string separated with commas or whatever you define as the argument
+- .split() will take a string and split it up into an array based on the argument
+
+```javascript
+const foodString = "hot dogs,hamburgers,sausages,corn";
+console.log(foodString.split(","));
+// ["hot dogs", "hamburgers", "sausages", "corn"]
+```
+
+- you can also leave off the argument and it will split between each character
+- we also have .pop(), .push(), .shift(), .unshift()
+
+```javascript
+// take the last item off toppings with pop()
+const lastItem = toppings.pop();
+// add it back with push()
+toppings.push(lastItem);
+// take the first item off toppings with shift()
+const firstItem = toppings.shift();
+// add it back in with unshift()
+toppings.unshift(firstItem);
+
+// Do the last four,but immutable (with spreads and new variables)
+let newToppings = toppings.slice(0, toppings.length - 1);
+newToppings = [...newToppings, toppings[toppings.length - 1]];
+console.log(newToppings);
+
+// Make a copy of the toppings array with slice()
+const toppingsCopy = toppings.slice(0);
+// Make a copy of the toppings array with a spread
+const toppingsCopy2 = [...toppings];
+// take out items 3 to 5 of your new toppings array with splice()
+newToppings.splice(3, 5);
+console.log(newToppings);
+// find the index of Avocado with indexOf() / lastIndexOf()
+const avoIndex = toppings.indexOf("Avocado");
+console.log(avoIndex);
+// Check if hot sauce is in the toppings with includes()
+const isInToppings = toppings.includes("Hot Sauce");
+console.log(isInToppings);
+// add it if it's not
+if (!isInToppings) {
+  toppings.push("Hot Sauce");
+}
+console.log(toppings);
+// flip those toppings around with reverse()
+toppings.reverse(); // mutable
+
+const toppingsReversed = [...toppings].reverse(); // immutable
+```
+
+### Array Cardio - Callback Methods and Function Generation
+
+- find the first rating that talks about a burger with find()
+
+```javascript
+function findBurgRating(singleFeedback) {
+  // if (singleFeedback.comment.includes("burg")) {
+  //   return true;
+  // }
+  // return false;
+
+  // simplify the above as includes returns true or false
+  return singleFeedback.comment.includes("burg");
+}
+// .find() takes a function
+const burgRating = feedback.find(findBurgRating);
+console.log(burgRating);
+// returns {comment: "Love the burgs", rating: 4}
+```
+
+- the above function is very much tied to a particular term so you could instead create a **higher order function** that takes in a value and returns another function
+
+```javascript
+function findByWord(word) {
+  return function(singleFeedback) {
+    return singleFeedback.comment.includes(word);
+  };
+}
+
+const burgRating = feedback.find(findByWord("burg"));
+console.log(burgRating);
+```
+
+- find all ratings that are above 2 with filter()
+- filter() returns a new array after filtering out values that return false
+
+```javascript
+const goodReviews = feedback.filter((singleFeedback) => {
+  if (singleFeedback.rating > 2) {
+    return true;
+  }
+  return false;
+});
+
+// or shorten that as its a condition that automatically returns either true or false
+const goodReviews = feedback.filter(
+  (singleFeedback) => singleFeedback.rating > 2
+);
+
+console.table(goodReviews);
+```
+
+- this could also be turned into a higher order function
+
+```javascript
+function filterByMinRating(minRating) {
+  return function(singleFeedback) {
+    return singleFeedback.rating > minRating;
+  };
+}
+
+const goodReviews = feedback.filter(filterByMinRating(2));
+console.table(goodReviews);
+```
+
+- find all ratings that talk about a burger with filter()
+
+```javascript
+const burgRatings = feedback.filter(findByWord("burg"));
+console.table(burgRatings);
+```
+
+- here we've been able to reuse our findByWord function
+- shows how these higher order functions can be really elegant in how they can be reused if created well
+
+- Remove the one star rating however you like:
+
+```javascript
+const lowRatings = feedback.filter((singleFeedback) => {
+  if (singleFeedback.rating === 1) {
+    return false;
+  }
+  return true;
+});
+
+// could also write the above as
+const lowRatings = feedback.filter(
+  (singleFeedback) => singleFeedback.rating !== 1
+);
+
+console.table(lowRatings);
+```
+
+- check if there is at least 5 of one type of meat with some()
+
+```javascript
+const isThereEnoughOfAtLeastOneMeat = Object.values(meats).some(
+  (meatValue) => meatValue >= 5
+);
+console.log(isThereEnoughOfAtLeastOneMeat);
+```
+
+- make sure we have at least 3 of every meat with every()
+
+```javascript
+const isThereEnoughOfEveryMeat = Object.values(meats).every(
+  (meatValue) => meatValue >= 3
+);
+console.log(isThereEnoughOfEveryMeat);
+```
+
+- .sort() will convert items to strings and compare alphabetically so we need to do some work to do it with numbers
+- .sort() will loop over the array and compare numbers in order, the callback function will compare pairs of numbers
+
+```javascript
+const numbers = [1, 2, 100, 3, 200, 400, 155];
+const numbersSorted = numbers.sort(function(firstItem, secondItem) {
+  return firstItem - secondItem;
+});
+console.log(numbersSorted);
+```
+
+- sort the toppings alphabetically with sort()
+
+```javascript
+console.log(toppings.sort());
+```
+
+- sort the order totals from most expensive to least with .sort()
+
+```javascript
+function numberSort(a, b) {
+  return a - b;
+}
+console.log(orderTotals.sort(numberSort));
+```
+
+- Sort the prices with sort()
+
+```javascript
+const productSortedByPrice = Object.entries(prices).sort(function(a, b) {
+  const aPrice = a[1];
+  const bPrice = b[1];
+  return aPrice - bPrice;
+});
+console.table(productSortedByPrice);
+```
+
+## Module 9: Gettin' Loopy
+
+### Looping and Iterating - Array .forEach
+
+- often looping over an array - method runs a callback each time it loops over an array item
+
+```javascript
+function logTopping(topping) {
+  console.log(topping);
+}
+toppings.forEach(logTopping);
+
+// OR
+toppings.forEach((topping) => {
+  console.log(topping);
+});
+
+// You also can get the index and array itself
+toppings.forEach((topping, index, array) => {
+  console.log(topping, index, array);
+});
+```
+
+- our **topping** parameter here can be anything
+- forEach doesn't really return anything it just loops over our array and we want to do something with each item
+
+### Looping and Iterating - Mapping
+
+- Map takes in data, performs an operation on the data and returns something new on the other side
+
+```javascript
+function frownify(name) {
+  return `${name} Frown`;
+}
+
+const fullName = ["john", "bec", "issy", "auds"].map(frownify);
+console.log(fullName);
+```
+
+- you can also chain maps - here we also capitalised the first name
+
+```javascript
+function frownify(name) {
+  return `${name} Frown`;
+}
+function capitalise(word) {
+  return `${word[0].toUpperCase()}${word.slice(1)}`;
+}
+
+const fullName = ["john", "bec", "issy", "auds"].map(capitalise).map(frownify);
+console.log(fullName);
+```
+
+- often you will have an array of objects you need to map over from an API
+
+```javascript
+const cleanPeople = people.map(function(person) {
+  // Get their birthday (timestamp)
+  const birthday = new Date(person.birthday).getTime();
+  // now timestamp
+  const now = Date.now();
+
+  // Work out their age (big number is milliseconds in a year)
+  const age = Math.floor((now - birthday) / 31536000000);
+
+  return {
+    age,
+    name: `${person.names.first} ${person.names.last}`,
+  };
+});
+
+console.table(cleanPeople);
+```
+
+- when working with dates you can use this tool to get a timestamp:
+  epoch.now.sh
+- setting const now = new Date(); with no arguments give you the current date
+- now.getTime() will give a timestamp of that date in milliseconds from Jan 1, 1970
+- the shortcut for that is Date.now()
+
+### Looping and Iterating - Filter, Find and Higher Order Functions
+
+- filter loops over our times and returns either true or false based on a specific condition
+
+```javascript
+const over40 = cleanPeople.filter((person) => person.age > 40);
+```
+
+- .find just returns the single item (an object) you are looking for while filter returns all the items that match (as an array)
+
+```javascript
+const specialStudent = students.find((student) => student.id === "565a");
+console.log(specialStudent);
+```
+
+- this could also be written as a higher order function
+
+```javascript
+function findById(id) {
+  return function isStudent(student) {
+    return student.id === id;
+  };
+}
+
+const specialStudent = students.find(findById("565a"));
+console.log(specialStudent);
+```
+
+- to make a function even more useful we can set it up to search by any property on the object
+
+```javascript
+function findByProp(prop, propValue) {
+  return function isStudent(student) {
+    return student[prop] === propValue;
+  };
+}
+
+const student = students.find(findByProp("id", "565a"));
+console.log(student);
+const student2 = students.find(findByProp("first_name", "Micki"));
+console.log(student2);
+```
+
+### Looping and Iterating - Reduce
+
+- reduce() takes in an array of data and returns to you a result or single value
+
+```javascript
+// takes in the tally from the array and also a current total to work with
+function tallyNumbers(tally, currentTotal) {
+  console.log(`The current tally is ${tally}`);
+  console.log(`The current total is ${currentTotal}`);
+  console.log("--------------");
+  // return the current tally plus the amount of this order
+  return tally + currentTotal;
+}
+
+// the 0 sets the currentTotal initially
+// this tally's up all the orderTotals
+const allOrders = orderTotals.reduce(tallyNumbers, 0);
+console.log(allOrders); // tallys the total amount
+```
+
+```javascript
+const inventory = [
+  { type: "shirt", price: 4000 },
+  { type: "pants", price: 4532 },
+  { type: "socks", price: 234 },
+  { type: "shirt", price: 2343 },
+  { type: "pants", price: 2343 },
+  { type: "socks", price: 542 },
+  { type: "pants", price: 123 },
+];
+
+// this function counts the number of different types
+function inventoryReducer(totals, item) {
+  console.log(`Looping over ${item.type}`);
+  // increment the type by 1
+  // uses a conditional for each initial item type
+  totals[item.type] = totals[item.type] + 1 || 1;
+  // return the totals, so the next loop can use it
+  return totals;
+}
+// starts with an empty object when counting
+const inventoryCounts = inventory.reduce(inventoryReducer, {});
+console.log(inventoryCounts);
+
+// this loops over inventory saves the acc (accumulated total)
+// then adds the item price for a grand total
+// starts the count at 0
+const totalInventoryPrice = inventory.reduce(
+  (acc, item) => acc + item.price,
+  0
+);
+console.log(totalInventoryPrice);
+```
